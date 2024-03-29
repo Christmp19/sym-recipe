@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymRecipe - Mes recettes
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+
+		{% if not recipes.items is same as([]) %}
+			<h1>Mes recettes</h1>
+
+			<a href="{{ path('recipe.new') }}" class="btn btn-primary">
+				Créer une recette
+			</a>
+
+			<div class="count mt-4">Il y a
+				{{ recipes.getTotalItemCount }}
+				recette(s)
+			</div>
+
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Image</th>
+						<th scope="col">Numéro</th>
+						<th scope="col">Nom</th>
+						<th scope="col">Prix</th>
+						<th scope="col">Difficulté</th>
+						<th scope="col">Date de création</th>
+						<th scope="col">Favoris</th>
+						<th scope="col">Edition</th>
+						<th scope="col">Suppresion</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for recipe in recipes %}
+						<tr class="table-primary">
+							<td style="width: 60px; height: 40">
+								<img src="{{ asset('images/recette/') ~ recipe.imageName }} " width="90" style="max-height: 60px;" alt="Image recette" class="img-fluid">
+							</td>
+							<th scope="row">{{ recipe.id }}</th>
+							<td>{{ recipe.name }}</td>
+							<td>
+								{% if recipe.price is null %}
+									Non renseigné
+								{% else %}
+									{{ recipe.price|number_format(2, '.', ',') }}
+									€
+								{% endif %}
+							</td>
+							<td>
+								{% if recipe.difficulty is null %}
+									Non renseigné
+								{% else %}
+									{{ recipe.difficulty }}
+								{% endif %}
+							</td>
+							<td>{{ recipe.createdAt|date('d/m/Y') }}</td>
+							<td>
+							{%if recipe.isFavorite %}
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="yellow" class="bi bi-star-fill" viewBox="0 0 16 16">
+								<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+							  </svg>
+							
+							{%else%}
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+								<path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+							  </svg>
+							{%endif%}
+							</td>
+							<td>
+								<a href="{{ path('recipe.edit', { id: recipe.id }) }}" class="btn btn-info">Modifier</a>
+							</td>
+							<td>
+								<a href="{{ path('recipe.delete', { id: recipe.id }) }}" class="btn btn-warning">Supprimer</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			<div class="navigation d-flex justify-content-center mt-4">
+				{{ knp_pagination_render(recipes) }}
+			</div>
+		{% else %}
+			<h4>Il n'y a pas de recettes</h4>
+
+			<a href="{{ path('recipe.new') }}" class="btn btn-primary">
+				Créer une recette
+			</a>
+		{% endif %}
+	</div>
+{% endblock %}
